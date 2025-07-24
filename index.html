@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Weather Application</h1>
+    <input type="text" id="city-name" placeholder="Enter city name" />
+    <button id="city-btn">Get Weather</button>
+    <div id="weather-info">
+      <p id="loding"></p>
+      <h3 id="cname"></h3>
+      <p id="date"></p>
+      <p id="temperature"></p>
+      <p id="description"></p>
+      <p id="wind-speed"></p>
+    </div>
+  </div>
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        background-image: url('');
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        color: white;
+        text-align: center;
+        }
+        .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        background-color: rgba(7, 246, 75, 0.5);
+        border-radius: 10px;
+        }
+        input[type="text"] {
+        width: 80%;
+        padding: 10px;
+        margin-right: 10px;
+        }
+        button {
+        padding: 10px 20px;
+        }
+        #weather-info p {
+        margin: 5px 0;
+        }
+        </style>
+
+  <script>
+    const API_KEY = "4767455b1ffd7c81c6ee5ee22627c7d2";
+
+    async function getWeather(city) {
+      document.getElementById("loding").textContent = "Loading...";
+      try {
+        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`);
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        const data = await res.json();
+        document.getElementById("loding").innerHTML = "";
+        document.getElementById("cname").innerHTML = `City: ${data.name}`;
+        document.getElementById("date").innerHTML = `Date: ${new Date().toLocaleDateString()}`;
+        document.getElementById("temperature").innerHTML = `Temperature: ${data.main.temp}°C`;
+        document.getElementById("description").innerHTML = `Weather: ${data.weather[0].description}`;
+        document.getElementById("wind-speed").innerHTML = `Wind Speed: ${data.wind.speed} m/s`;
+        setBackground(data.weather[0].main);
+      } catch (err) {
+        document.getElementById("loding").innerHTML= 'Error: ' + err.message;
+      }
+    }
+    
+
+    function setBackground(weather) {
+      const bg = {
+        Clear: "clearsky.jpg",
+        Clouds: "cloudy.jpg",
+        Rain: "rainy.webp",
+        Drizzle: "drizzle.jpg",
+        Mist: "mist.webp",
+        Thunderstorm: "tunder.webp",
+        Snow: "snow.jpg"
+      };
+      document.body.style.background = 'url(' + (bg[weather]) + ') no-repeat center center fixed';
+      document.body.style.backgroundSize = "cover";
+    }
+    document.getElementById("city-btn").addEventListener("click", () => {
+      const city = document.getElementById("city-name").value.trim();
+      if (city) getWeather(city);
+    });
+  </script>
+</body>
+</html>
